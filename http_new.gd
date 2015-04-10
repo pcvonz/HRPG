@@ -59,7 +59,11 @@ func http_request():
     ]
 
 	err = http.request(HTTPClient.METHOD_GET,"/api/v2/user",headers) # Request a page from the site (this one was chunked..)
-	assert( err == OK ) # Make sure all is OK
+	if (err == OK ):
+		var popup = get_parent().get_node("PopupDialog")
+		popup.show()# Make sure all is OK
+		popup.get_node("lable_err").set_text("Can't connect! Wrong key/user id?")
+		
 	while (http.get_status() == HTTPClient.STATUS_REQUESTING):
         # Keep polling until the request is going on
         http.poll()
@@ -114,10 +118,9 @@ func _post():
 	pass
 
 func _ready():
-	
 	var file = File.new()
 	file.open("key.txt", 1)
-	user_id = file.get_line()
+	user_id = "SDf"
 	api_key = file.get_line()
 	print(user_id)
 	http_request()
