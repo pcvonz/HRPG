@@ -1,14 +1,8 @@
 extends Node2D
+
 var http
 var headers
-# HTTPClient demo
-# This simple class can do HTTP requests, it will not block but it needs to be polled
-# member variables here, example:
-# var a=2
-# var b="textvar"
 var user
-var user_id
-var api_key
 
 func generate_api_string(dictionary):
 	var beep = ""
@@ -18,26 +12,22 @@ func generate_api_string(dictionary):
 	
 func _on_button_pressed():
 	var beep = generate_api_string(user.profile)
-	change_text(beep)
+
 
 func _on_stats_pressed():
 	var beep = generate_api_string(user.stats)
-	change_text(beep)
+
 
 func _on_tasks_pressed():
 	var temp = ""
 	for i in user.todos:
 		if i.completed == false:
 			temp = temp + str(i.text) + "\n"
-			get_parent()._create_widget(temp, i.id)
+			get_parent().get_node("content")._create_widget(temp, i.id)
 			temp = ""
-	change_text(temp)
 
-func change_text(text):
-	get_parent().get_node("Output").clear()
-	get_parent().get_node("Output").add_text(text)
 
-func http_request():
+func http_init():
 	var err=0
 	http = HTTPClient.new() # Create the Client
 	var err = http.connect("https://habitrpg.com", 443, true)
@@ -52,14 +42,9 @@ func http_request():
 	assert( http.get_status() == HTTPClient.STATUS_CONNECTED ) # Could not conn
 	
     # Some headers
-
-	headers=[
-		"x-api-user: " + user_id,
-		"x-api-key: " + api_key
-    ]
-
-	err = http.request(HTTPClient.METHOD_GET,"/api/v2/user",headers) # Request a page from the site (this one was chunked..)
-	if (err == OK ):
+func http_get_user():
+	var err = http.request(HTTPClient.METHOD_GET,"/api/v2/user",headers) # Request a page from the site (this one was chunked..)
+	if (err != OK ):
 		var popup = get_parent().get_node("PopupDialog")
 		popup.show()# Make sure all is OK
 		popup.get_node("lable_err").set_text("Can't connect! Wrong key/user id?")
@@ -114,16 +99,28 @@ func http_request():
 		var task_dict = Dictionary()
 		task_dict.parse_json(text)
 		user = task_dict
-func _post():
-	pass
+		
+		
+func http_post(task_id, url):
+	print(task_id)
+	print("HELLO")
+	http.request(HTTPClient.METHOD_POST, url, headers)
 
-func _ready():
+func get_headers():
 	var file = File.new()
 	file.open("key.txt", 1)
-	user_id = "SDf"
-	api_key = file.get_line()
-	print(user_id)
-	http_request()
+	var user_id = file.get_line()
+	var api_key = file.get_line()
+	
+	headers=[
+	"x-api-user: " + user_id,
+	"x-api-key: " + api_key
+    ]
+
+func _ready():
+	get_headers()
+	http_init()
+	http_get_user()
 	print(user.keys())
 	get_parent().get_node("User").connect("pressed",self,"_on_button_pressed")
 	get_parent().get_node("Stats").connect("pressed",self,"_on_stats_pressed")
