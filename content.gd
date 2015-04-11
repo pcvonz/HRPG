@@ -1,3 +1,4 @@
+
 extends Panel
 
 var button
@@ -11,6 +12,8 @@ var panel_pos = Vector2()
 
 var panel_size_begin = Vector2()
 var panel_size_end = Vector2()
+
+var const_margin_top = 0
 
 func _init():
 	panel_pos.y = -60
@@ -34,7 +37,6 @@ func _create_widget(text, id):
 	button = Button.new()
 	panel = Panel.new()
 	label = Label.new()
-	
 	#Make a new post node and add it as a child of panel
 	var node = get_node("post").duplicate()
 	add_child(node)
@@ -64,4 +66,3 @@ func _create_widget(text, id):
 
 func _ready():
 	print("HELLO O O O ")
-	get_node("Button").connect("pressed", self, "_on_button_pressed")
