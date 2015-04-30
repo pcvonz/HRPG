@@ -4,6 +4,8 @@ var http
 var headers
 var user
 
+# Deprecated function that used to print all tasks. 
+# Reference on tasks pressed to see the current way of handling this.
 func generate_api_string(dictionary):
 	var beep = ""
 	for keys in dictionary.keys():
@@ -17,7 +19,8 @@ func _on_button_pressed():
 func _on_stats_pressed():
 	var beep = generate_api_string(user.stats)
 
-
+# Creates a new node for each task and links it to a button
+# For all tasks that aren't completed.
 func _on_tasks_pressed():
 	var temp = ""
 	for i in user.todos:
@@ -26,7 +29,8 @@ func _on_tasks_pressed():
 			get_parent().get_node("content")._create_widget(temp, i.id)
 			temp = ""
 
-
+# Grabs hrpg and stores it i variable http.
+# Needs ssl cert, check godot settings.
 func http_init():
 	var err=0
 	http = HTTPClient.new() # Create the Client
@@ -41,12 +45,15 @@ func http_init():
 
 	assert( http.get_status() == HTTPClient.STATUS_CONNECTED ) # Could not conn
 	
-    # Some headers
+# Get User
+# Gets the user from the habit rpg server. 
+# If it doesn't succeed it requests the user to input api key and user id
+## Need to figure out how to check if the it's connected or not. If it's not connected show pop up, otherwise don't show..
 func http_get_user():
 	var err = http.request(HTTPClient.METHOD_GET,"/api/v2/user",headers) # Request a page from the site (this one was chunked..)
-	if (err != OK ):
+	if (err == 0 ): # Make sure all is OK
 		var popup = get_parent().get_node("PopupDialog")
-		popup.show()# Make sure all is OK
+		popup.show() 
 		popup.get_node("lable_err").set_text("Can't connect! Wrong key/user id?")
 		
 	while (http.get_status() == HTTPClient.STATUS_REQUESTING):
@@ -76,9 +83,7 @@ func http_get_user():
             #Or just plain Content-Length
 			var bl = http.get_response_body_length()
 			print("Response Length: ",bl)
-
         #This method works for both anyway
-
 		var rb = RawArray() #array that will hold the data
 
 		while(http.get_status()==HTTPClient.STATUS_BODY):
@@ -103,7 +108,6 @@ func http_get_user():
 		
 func http_post(task_id, url):
 	print(task_id)
-	print("HELLO")
 	http.request(HTTPClient.METHOD_POST, url, headers)
 
 func get_headers():
