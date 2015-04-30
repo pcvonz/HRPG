@@ -9,3 +9,5 @@ Create a folder in the root directory called **key.txt**. The contents should co
 xxxxxxxxxxxxxx
 xxxxxxxxxxxxxx
 ```
+
+You will also need an ssl certificate. The Godot wiki has a tutorial on that [here](https://github.com/okamstudio/godot/wiki/tutorial_ssl).
