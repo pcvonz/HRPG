@@ -15,7 +15,7 @@ func post_task():
 	get_parent().set_margin(MARGIN_TOP, get_parent().const_margin_top)
 	
 	##Should make this grayed out instead.
-	get_parent().remove_and_delete_child(self)
+	get_parent().remove_child(self)
 	
 func _ready():
 	# Initialization here
