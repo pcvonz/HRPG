@@ -7,8 +7,11 @@ func _login():
 	var file = File.new()
 	file.open("key.txt", 2)
 	file.store_string(user_id + "\n" + api_key)
-	get_parent().get_node("http")._ready()
+	file.close()
 	self.hide()
+	get_parent().get_node("http")._ready()
+	
+	
 
 func _ready():
 	# Initialization here
