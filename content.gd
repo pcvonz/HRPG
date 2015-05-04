@@ -37,6 +37,7 @@ func _create_widget(text, id):
 	button = Button.new()
 	panel = Panel.new()
 	label = Label.new()
+	
 	#Make a new post node and add it as a child of panel
 	var node = get_node("post").duplicate()
 	add_child(node)
@@ -44,6 +45,9 @@ func _create_widget(text, id):
 	#set up button
 	button.set_text(text)
 	button.connect("pressed", node, "post_task")
+	
+
+	
 	
 	node.task_id = id
 	
